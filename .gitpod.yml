@@ -1,0 +1,15 @@
+.gitpod.yml
+
+image: gitpod/workspace-full
+
+tasks:
+  - name: Start SaaS Stack
+    init: docker-compose up -d
+
+ports:
+  - port: 80
+    onOpen: open-preview
+  - port: 443
+    onOpen: open-preview
+  - port: 5678
+    onOpen: ignore
