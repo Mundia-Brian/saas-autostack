@@ -1,8 +1,9 @@
 image: gitpod/workspace-full
 
 tasks:
-  - init: docker-compose up -d
-    name: Start SaaS Stack
+  - name: Start SaaS Stack
+    init: docker-compose up -d
+    command: docker-compose logs -f
 
 ports:
   - port: 80
