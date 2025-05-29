@@ -1,0 +1,19 @@
+n8n.yourdomain.com {
+    reverse_proxy n8n:5678
+}
+
+postiz.yourdomain.com {
+    reverse_proxy postiz:3001
+}
+
+mixpost.yourdomain.com {
+    reverse_proxy mixpost:80
+}
+
+crm.yourdomain.com {
+    reverse_proxy espocrm:80
+}
+
+analytics.yourdomain.com {
+    reverse_proxy posthog:8000
+}

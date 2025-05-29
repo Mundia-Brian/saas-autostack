@@ -1,0 +1,113 @@
+version: "3.8"
+
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n
+    environment:
+      - GENERIC_TIMEZONE=Europe/London
+    volumes:
+      - ./n8n:/home/node/.n8n
+    labels:
+      caddy: n8n.yourdomain.com
+      caddy.reverse_proxy: "/  n8n:5678"
+    restart: unless-stopped
+
+  postiz:
+    image: kaymen99/dittosend:latest
+    container_name: postiz
+    environment:
+      - PORT=3001
+    labels:
+      caddy: postiz.yourdomain.com
+      caddy.reverse_proxy: "/  postiz:3001"
+    restart: unless-stopped
+
+  mixpost:
+    image: johndatserakis/mixpost:latest
+    container_name: mixpost
+    environment:
+      - MIXPOST_APP_URL=https://mixpost.yourdomain.com
+    labels:
+      caddy: mixpost.yourdomain.com
+      caddy.reverse_proxy: "/  mixpost:80"
+    restart: unless-stopped
+
+  espocrm:
+    image: espocrm/espocrm
+    container_name: espocrm
+    environment:
+      - ESPOCRM_DATABASE_DRIVER=mysql
+      - ESPOCRM_DATABASE_HOST=db
+      - ESPOCRM_DATABASE_NAME=espocrm
+      - ESPOCRM_DATABASE_USER=espocrm
+      - ESPOCRM_DATABASE_PASSWORD=espopass
+    depends_on:
+      - db
+    volumes:
+      - ./espocrm:/var/www/html
+    labels:
+      caddy: crm.yourdomain.com
+      caddy.reverse_proxy: "/  espocrm:80"
+    restart: unless-stopped
+
+  db:
+    image: mariadb
+    container_name: db
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=espocrm
+      - MYSQL_USER=espocrm
+      - MYSQL_PASSWORD=espopass
+    volumes:
+      - ./db:/var/lib/mysql
+    restart: unless-stopped
+
+  posthog:
+    image: posthog/posthog:latest
+    container_name: posthog
+    depends_on:
+      - posthog-db
+      - posthog-redis
+    environment:
+      - DATABASE_URL=postgres://posthog:posthog@posthog-db:5432/posthog
+      - REDIS_URL=redis://posthog-redis:6379
+      - SECRET_KEY=a-very-secret-key-change-me
+    labels:
+      caddy: analytics.yourdomain.com
+      caddy.reverse_proxy: "/  posthog:8000"
+    restart: unless-stopped
+
+  posthog-db:
+    image: postgres:13
+    container_name: posthog-db
+    environment:
+      - POSTGRES_DB=posthog
+      - POSTGRES_USER=posthog
+      - POSTGRES_PASSWORD=posthog
+    volumes:
+      - ./posthog-db:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  posthog-redis:
+    image: redis:6
+    container_name: posthog-redis
+    volumes:
+      - ./posthog-redis:/data
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
