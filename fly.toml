@@ -1,0 +1,28 @@
+# fly.toml for full Docker Compose SaaS stack on Fly.io
+
+app = "your-saas-app-name"  # change this to your desired Fly app name
+primary_region = "ams"       # or choose closest to your target audience
+
+[build]
+  image = "" # We'll use a Dockerfile, so leave this blank
+
+[env]
+  NODE_ENV = "production"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 80
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [[services.tcp_checks]]
+    interval = 10000
+    timeout = 2000
+    grace_period = "5s"
+    restart_limit = 0
