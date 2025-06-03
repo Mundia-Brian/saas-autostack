@@ -18,8 +18,16 @@ services:
     container_name: n8n
     environment:
       - GENERIC_TIMEZONE=Europe/London
+      - DB_TYPE=sqlite
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - N8N_HOST=n8n.local
+      - WEBHOOK_URL=https://n8n.local
     volumes:
       - ./n8n:/home/node/.n8n
+    ports:
+      - "5678:5678"
     labels:
       caddy: n8n.yourdomain.com
       caddy.reverse_proxy: "/  n8n:5678"
@@ -108,28 +116,9 @@ services:
       - ./posthog-redis:/data
     restart: unless-stopped
 
-volumes:
-  caddy_data:
-  caddy_config:
-  
-services:
-  n8n:
-    image: n8nio/n8n
-    restart: always
-    environment:
-      - DB_TYPE=sqlite
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=admin123
-      - N8N_HOST=n8n.local
-      - WEBHOOK_URL=https://n8n.local
-    ports:
-      - "5678:5678"
-    volumes:
-      - n8n_data:/home/node/.n8n
-
   mailrise:
     image: mbround18/mailrise
+    container_name: mailrise
     restart: always
     ports:
       - "8025:8025"
@@ -137,5 +126,8 @@ services:
       - mailrise_config:/config
 
 volumes:
+  caddy_data:
+  caddy_config:
   n8n_data:
   mailrise_config:
+
