@@ -6,6 +6,8 @@ Easily launch your own self-hosted, white-labeled SaaS platform for **marketing 
 
 ## 💡 Features
 
+-    **Postiz** - campaign sender
+-    **Mailrise** - Lightweight SMTP relay
 - 🔄 **n8n** – No-code automation workflows
 - 📇 **EspoCRM** – Customer Relationship Management
 - 📊 **PostHog** – Product analytics and event tracking
@@ -27,17 +29,17 @@ Easily launch your own self-hosted, white-labeled SaaS platform for **marketing 
 2. Modify services, brand assets, or configuration
 3. Deploy via Fly.io or locally
 
----
+## 🔧 Stack Components
 
-## 🧩 Services & Subdomains
-
-| App       | Port | Subdomain           | Purpose                    |
-|-----------|------|----------------------|----------------------------|
-| n8n       | 5678 | `n8n.yourdomain.com` | No-code automation         |
-| EspoCRM   | 8080 | `crm.yourdomain.com` | CRM & sales pipeline       |
-| Mixpost   | 80   | `mixpost.yourdomain.com` | Social content scheduler |
-| PostHog   | 8000 | `analytics.yourdomain.com` | Product analytics     |
-| Caddy     | 443  | -                    | HTTPS & reverse proxy      |
+| Service     | Description                                                  | URL Subdomain              |
+|-------------|--------------------------------------------------------------|----------------------------|
+| Caddy       | Reverse proxy + HTTPS for all services                       | `*.yourdomain.com`         |
+| n8n         | Workflow automation (email, SMS, CRM integration)            | `n8n.yourdomain.com`       |
+| Postiz      | Cold email automation / campaign sender                      | `postiz.yourdomain.com`    |
+| Mixpost     | Social media scheduler and content planner                   | `mixpost.yourdomain.com`   |
+| EspoCRM     | CRM system for sales pipeline and lead tracking              | `crm.yourdomain.com`       |
+| PostHog     | Product analytics and session replay                         | `analytics.yourdomain.com` |
+| Mailrise    | Lightweight SMTP relay for push notifications & alerts       | `mail.yourdomain.com`      |
 
 ---
 
