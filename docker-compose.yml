@@ -111,3 +111,31 @@ services:
 volumes:
   caddy_data:
   caddy_config:
+  
+services:
+  n8n:
+    image: n8nio/n8n
+    restart: always
+    environment:
+      - DB_TYPE=sqlite
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - N8N_HOST=n8n.local
+      - WEBHOOK_URL=https://n8n.local
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  mailrise:
+    image: mbround18/mailrise
+    restart: always
+    ports:
+      - "8025:8025"
+    volumes:
+      - mailrise_config:/config
+
+volumes:
+  n8n_data:
+  mailrise_config:
